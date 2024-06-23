@@ -43,6 +43,7 @@ library
       Outpaths
       Process
       Repology
+      ProxmoxSource
       Rewrite
       Skiplist
       Update
