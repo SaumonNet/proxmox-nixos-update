@@ -56,12 +56,8 @@ type Plan = [(Text, Rewriter)]
 
 plan :: Plan
 plan =
-  [ ("version", version),
-    ("rustCrateVersion", rustCrateVersion),
-    ("golangModuleVersion", golangModuleVersion),
-    ("npmDepsVersion", npmDepsVersion),
-    ("updateScript", updateScript)
-    -- ("redirectedUrl", Rewrite.redirectedUrls)
+  [ ("updateScript", updateScript)
+  -- ("redirectedUrl", Rewrite.redirectedUrls)
   ]
 
 runAll :: (Text -> IO ()) -> Args -> ExceptT Text IO [Text]
