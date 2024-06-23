@@ -184,7 +184,7 @@ getSrcUrl =
 
 buildCmd :: Text -> ProcessConfig () () ()
 buildCmd attrPath =
-  silently $ proc (binPath <> "/nix-build") (nixBuildOptions ++ ["-A", attrPath & T.unpack])
+  silently $ proc (binPath <> "/nix-build") (nixBuildOptions ++ [ "-A", "packages.x86_64-linux." <> attrPath & T.unpack])
 
 log :: Text -> ProcessConfig () () ()
 log attrPath = proc (binPath <> "/nix") ["--extra-experimental-features", "nix-command", "log", "-f", ".", attrPath & T.unpack]
