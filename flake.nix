@@ -9,27 +9,41 @@
 
   inputs.runtimeDeps.url = "github:NixOS/nixpkgs/nixos-unstable-small";
 
-  nixConfig.extra-substituters = "https://nix-community.cachix.org";
-  nixConfig.extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=";
-
-  outputs = { self, nixpkgs, mmdoc, treefmt-nix, runtimeDeps } @ args:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      mmdoc,
+      treefmt-nix,
+      runtimeDeps,
+    }@args:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
       eachSystem = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
-      treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs {
-        projectRootFile = ".git/config";
-        programs.ormolu.enable = true;
-      });
+      treefmtEval = eachSystem (
+        pkgs:
+        treefmt-nix.lib.evalModule pkgs {
+          projectRootFile = ".git/config";
+          programs.ormolu.enable = true;
+        }
+      );
     in
     {
       checks.x86_64-linux =
         let
-          packages = nixpkgs.lib.mapAttrs' (n: nixpkgs.lib.nameValuePair "package-${n}") self.packages.x86_64-linux;
-          devShells = nixpkgs.lib.mapAttrs' (n: nixpkgs.lib.nameValuePair "devShell-${n}") self.devShells.x86_64-linux;
+          packages = nixpkgs.lib.mapAttrs' (
+            n: nixpkgs.lib.nameValuePair "package-${n}"
+          ) self.packages.x86_64-linux;
+          devShells = nixpkgs.lib.mapAttrs' (
+            n: nixpkgs.lib.nameValuePair "devShell-${n}"
+          ) self.devShells.x86_64-linux;
         in
-        packages // devShells // {
-          treefmt = treefmtEval.x86_64-linux.config.build.check self;
-        };
+        packages // devShells // { treefmt = treefmtEval.x86_64-linux.config.build.check self; };
 
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
 
