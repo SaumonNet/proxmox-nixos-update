@@ -299,7 +299,7 @@ runUpdateScript attrPath = do
   (exitCode, output) <-
     ourReadProcessInterleaved $
       TP.setStdin (TP.byteStringInput "\n") $
-        proc "timeout" [T.unpack timeout, "nix-shell", "maintainers/scripts/update.nix", "--argstr", "package", T.unpack attrPath]
+        proc "timeout" [T.unpack timeout, "nix-shell", "tasks/update.nix", "--argstr", "package", T.unpack attrPath]
   case exitCode of
     ExitFailure 124 -> do
       return (exitCode, "updateScript for " <> attrPath <> " took longer than " <> timeout <> " and timed out. Other output: " <> output)
