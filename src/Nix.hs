@@ -136,10 +136,9 @@ lookupAttrPath updateEnv =
 
 getDerivationFile :: MonadIO m => Text -> ExceptT Text m Text
 getDerivationFile attrPath = do
-  npDir <- liftIO $ Git.nixpkgsDir
-  proc "env" ["EDITOR=echo", (binPath <> "/nix"), "--extra-experimental-features", "nix-command", "edit", attrPath & T.unpack, "-f", "."]
+  proc "env" ["EDITOR=echo", (binPath <> "/nix"), "--extra-experimental-features", "nix-command", "edit", ".#" <> T.unpack attrPath]
     & ourReadProcess_
-    & fmapRT (fst >>> T.strip >>> T.stripPrefix (T.pack npDir <> "/") >>> fromJust)
+    & fmapRT (fst >>> T.strip >>> T.splitOn "/" >>> drop 4 >>> T.intercalate "/")
 
 -- Get an attribute that can be evaluated off a derivation, as in:
 -- getAttr "cargoSha256" "ripgrep" -> 0lwz661rbm7kwkd6mallxym1pz8ynda5f03ynjfd16vrazy2dj21
