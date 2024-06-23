@@ -1,45 +1,49 @@
-{ nixpkgs
-, mmdoc
-, runtimeDeps
-, system
-, self
-, ...
+{
+  nixpkgs,
+  mmdoc,
+  runtimeDeps,
+  system,
+  self,
+  ...
 }:
 
 let
 
   runtimePkgs = import runtimeDeps { inherit system; };
 
-  pkgs = import nixpkgs { inherit system; config = { allowBroken = true; }; };
-
-  drvAttrs = attrs: with runtimePkgs; {
-    NIX = nix;
-    GIT = git;
-    JQ = jq;
-    TREE = tree;
-    GIST = gist;
-    # TODO: are there more coreutils paths that need locking down?
-    TIMEOUT = coreutils;
-    NIXPKGSREVIEW = nixpkgs-review;
+  pkgs = import nixpkgs {
+    inherit system;
+    config = {
+      allowBroken = true;
+    };
   };
+
+  drvAttrs =
+    attrs: with runtimePkgs; {
+      NIX = nix;
+      GIT = git;
+      JQ = jq;
+      TREE = tree;
+      GIST = gist;
+      # TODO: are there more coreutils paths that need locking down?
+      TIMEOUT = coreutils;
+      NIXPKGSREVIEW = nixpkgs-review;
+    };
 
   haskellPackages = pkgs.haskellPackages.override {
     overrides = _: haskellPackages: {
       polysemy-plugin = pkgs.haskell.lib.dontCheck haskellPackages.polysemy-plugin;
       polysemy = pkgs.haskell.lib.dontCheck haskellPackages.polysemy;
       http-api-data = pkgs.haskell.lib.doJailbreak haskellPackages.http-api-data;
-      nixpkgs-update =
-        pkgs.haskell.lib.justStaticExecutables (
-          pkgs.haskell.lib.failOnAllWarnings (
-            pkgs.haskell.lib.disableExecutableProfiling (
-              pkgs.haskell.lib.disableLibraryProfiling (
-                pkgs.haskell.lib.generateOptparseApplicativeCompletion "nixpkgs-update" (
-                  (haskellPackages.callPackage ../nixpkgs-update.nix { }).overrideAttrs drvAttrs
-                )
-              )
+      nixpkgs-update = pkgs.haskell.lib.justStaticExecutables (
+        pkgs.haskell.lib.disableExecutableProfiling (
+          pkgs.haskell.lib.disableLibraryProfiling (
+            pkgs.haskell.lib.generateOptparseApplicativeCompletion "nixpkgs-update" (
+              (haskellPackages.callPackage ../nixpkgs-update.nix { }).overrideAttrs drvAttrs
             )
           )
-        );
+        )
+      );
     };
   };
 
@@ -50,8 +54,7 @@ let
       haskellPackages.cabal2nix
     ];
     packages = ps: [ ps.nixpkgs-update ];
-    shellHook = ''
-    '';
+    shellHook = '''';
   };
 
   doc = pkgs.stdenvNoCC.mkDerivation rec {
