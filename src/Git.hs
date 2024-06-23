@@ -188,7 +188,7 @@ findAutoUpdateBranchMessage pName = do
 inNixpkgsRepo :: IO Bool
 inNixpkgsRepo = do
   currentDir <- getCurrentDirectory
-  doesFileExist (currentDir <> "/nixos/release.nix")
+  doesFileExist (currentDir <> "tasks/update.nix")
 
 commit :: MonadIO m => Text -> ExceptT Text m ()
 commit ref =
