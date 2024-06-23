@@ -134,7 +134,7 @@ sourceGithubAll o updates = do
   _ <-
     runExceptT $ do
       Git.fetchIfStale <|> liftIO (T.putStrLn "Failed to fetch.")
-      Git.cleanAndResetTo "master"
+      Git.cleanAndResetTo "main"
   mapM_
     ( \(p, oldV, newV, url) -> do
         let updateEnv = UpdateEnv p oldV newV url o
@@ -246,9 +246,7 @@ updateAttrPath log mergeBase updateEnv@UpdateEnv {..} attrPath = do
 
     derivationFile <- Nix.getDerivationFile attrPath
     unless hasUpdateScript do
-      assertNotUpdatedOn updateEnv derivationFile "master"
-      assertNotUpdatedOn updateEnv derivationFile "staging"
-      assertNotUpdatedOn updateEnv derivationFile "staging-next"
+      assertNotUpdatedOn updateEnv derivationFile "main"
 
     -- Calculate output paths for rebuilds and our merge base
     let calcOutpaths = calculateOutpaths options && isNothing skipOutpathBase
@@ -333,9 +331,7 @@ updateAttrPath log mergeBase updateEnv@UpdateEnv {..} attrPath = do
     when hasUpdateScript do
       changedFiles <- Git.diffFileNames mergeBase
       let rewrittenFile = case changedFiles of [f] -> f; _ -> derivationFile
-      assertNotUpdatedOn updateEnv' rewrittenFile "master"
-      assertNotUpdatedOn updateEnv' rewrittenFile "staging"
-      assertNotUpdatedOn updateEnv' rewrittenFile "staging-next"
+      assertNotUpdatedOn updateEnv' rewrittenFile "main"
 
     --
     -- Outpaths
@@ -363,7 +359,7 @@ updateAttrPath log mergeBase updateEnv@UpdateEnv {..} attrPath = do
             fromMaybe
             skipOutpathBase
             if Outpaths.numPackageRebuilds opDiff <= 500
-              then "master"
+              then "main"
               else "staging"
     publishPackage log updateEnv' oldSrcUrl newSrcUrl attrPath result opReport prBase rewriteMsgs (isJust existingCommitMsg)
 

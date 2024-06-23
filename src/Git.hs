@@ -171,7 +171,7 @@ setupNixpkgs ghUser = do
 mergeBase :: IO Text
 mergeBase = do
   readProcessInterleavedNoIndexIssue_IO
-    (procGit ["merge-base", "upstream/master", "upstream/staging"])
+    (procGit ["merge-base", "upstream/main"])
     & fmap T.strip
 
 -- Return Nothing if a remote branch for this package doesn't exist. If a

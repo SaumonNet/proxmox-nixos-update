@@ -16,7 +16,7 @@ deleteDone delete githubToken ghUser = do
   result <-
     runExceptT $ do
       Git.fetch
-      Git.cleanAndResetTo "master"
+      Git.cleanAndResetTo "main"
       refs <- ExceptT $ GH.closedAutoUpdateRefs (GH.authFromToken githubToken) ghUser
       let branches = fmap (\r -> ("auto-update/" <> r)) refs
       if delete
