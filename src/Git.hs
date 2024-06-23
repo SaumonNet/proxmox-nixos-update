@@ -144,8 +144,7 @@ nixpkgsDir = do
   inNixpkgs <- inNixpkgsRepo
   if inNixpkgs
     then getCurrentDirectory
-    else getUserCacheDir "nixpkgs"
-nixpkgsDir = getUserCacheDir "proxmox-nixos"
+    else getUserCacheDir "proxmox-nixos"
 
 -- Setup a NixPkgs clone in $XDG_CACHE_DIR/proxmox-nixos
 -- Since we are going to have to fetch, git reset, clean, and commit, we setup a
