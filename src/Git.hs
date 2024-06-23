@@ -145,8 +145,9 @@ nixpkgsDir = do
   if inNixpkgs
     then getCurrentDirectory
     else getUserCacheDir "nixpkgs"
+nixpkgsDir = getUserCacheDir "proxmox-nixos"
 
--- Setup a NixPkgs clone in $XDG_CACHE_DIR/nixpkgs
+-- Setup a NixPkgs clone in $XDG_CACHE_DIR/proxmox-nixos
 -- Since we are going to have to fetch, git reset, clean, and commit, we setup a
 -- cache dir to avoid destroying any uncommitted work the user may have in PWD.
 setupNixpkgs :: Text -> IO ()
@@ -154,19 +155,18 @@ setupNixpkgs ghUser = do
   fp <- nixpkgsDir
   exists <- doesDirectoryExist fp
   unless exists $ do
-    procGit ["clone", "--origin", "upstream", "https://github.com/NixOS/nixpkgs.git", fp]
+    procGit ["clone", "--origin", "upstream", "https://github.com/SaumonNet/proxmox-nixos.git", fp]
       & runProcess_
     setCurrentDirectory fp
-    procGit ["remote", "add", "origin", "https://github.com/" <> T.unpack ghUser <> "/nixpkgs.git"]
+    procGit ["remote", "add", "origin", "https://github.com/" <> T.unpack ghUser <> "/proxmox-nixos.git"]
       -- requires that user has forked nixpkgs
       & runProcess_
   inNixpkgs <- inNixpkgsRepo
   unless inNixpkgs do
     setCurrentDirectory fp
     _ <- runExceptT fetchIfStale
-    _ <- runExceptT $ cleanAndResetTo "master"
+    _ <- runExceptT $ cleanAndResetTo "main"
     return ()
-  System.Posix.Env.setEnv "NIX_PATH" ("nixpkgs=" <> fp) True
 
 mergeBase :: IO Text
 mergeBase = do
