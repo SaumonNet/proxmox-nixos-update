@@ -181,10 +181,7 @@ updatePackageBatch simpleLog updateInfoLine updateEnv@UpdateEnv {..} = do
     Right foundAttrPath -> do
       log <- alsoLogToAttrPath foundAttrPath simpleLog
       log updateInfoLine
-      mergeBase <-
-        if batchUpdate options
-          then Git.mergeBase
-          else pure "HEAD"
+      mergeBase <- pure "HEAD"
       withWorktree mergeBase foundAttrPath updateEnv $
         updateAttrPath log mergeBase updateEnv foundAttrPath
 
