@@ -67,8 +67,8 @@ pr env title body prHead base = do
                   ( GH.github
                       (authFrom env)
                       ( GH.createPullRequestR
-                          (N "nixos")
-                          (N "nixpkgs")
+                          (N "saumonnet")
+                          (N "proxmox-nixos")
                           (GH.CreatePullRequest title body prHead base)
                       )
                   )
@@ -78,7 +78,7 @@ prUpdate :: forall m. MonadIO m => UpdateEnv -> Text -> Text -> Text -> Text -> 
 prUpdate env title body prHead base = do
   let runRequest :: FromJSON a => GH.Request k a -> ExceptT Text m a
       runRequest = ExceptT . fmap (first (T.pack . show)) . liftIO . GH.github (authFrom env)
-  let inNixpkgs f = f (N "nixos") (N "nixpkgs")
+  let inNixpkgs f = f (N "saumonnet") (N "proxmox-nixos")
 
   prs <-
     runRequest $
@@ -180,8 +180,8 @@ openPRWithAutoUpdateRefFrom auth ghUser ref =
   GH.executeRequest
     auth
     ( GH.pullRequestsForR
-        "nixos"
-        "nixpkgs"
+        "saumonnet"
+        "proxmox-nixos"
         (GH.optionsHead (GH.untagName ghUser <> ":" <> U.branchPrefix <> ref) <> GH.stateOpen)
         GH.FetchAll
     )
@@ -191,7 +191,7 @@ commitIsOldEnoughToDelete :: GH.Auth -> GH.Name GH.Owner -> GH.Name GH.GitCommit
 commitIsOldEnoughToDelete auth ghUser sha = do
   now <- getCurrentTime
   let cutoff = addUTCTime (-30 * 60) now
-  GH.executeRequest auth (GH.gitCommitR ghUser "nixpkgs" sha)
+  GH.executeRequest auth (GH.gitCommitR ghUser "proxmox-nixos" sha)
     <&> either (const False) ((< cutoff) . GH.gitUserDate . GH.gitCommitCommitter)
 
 refShouldBeDeleted :: GH.Auth -> GH.Name GH.Owner -> (Text, GH.Name GH.GitCommit) -> IO Bool
