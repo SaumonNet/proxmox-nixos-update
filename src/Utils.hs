@@ -314,4 +314,4 @@ getGithubUser = do
   hubUser <- hubConfigField "user: "
   case hubUser of
     Just usr -> return $ GH.mkOwnerName usr
-    Nothing -> return $ GH.mkOwnerName "r-ryantm"
+    Nothing -> return $ GH.mkOwnerName "proxmox-update"
