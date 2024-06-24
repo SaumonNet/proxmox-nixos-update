@@ -167,7 +167,6 @@ contentList =
     infixOf "buildRustCrate" "Derivation contains buildRustCrate",
     infixOf "buildRubyGem" "Derivation contains buildRubyGem",
     infixOf "bundlerEnv" "Derivation contains bundlerEnv",
-    infixOf "buildPerlPackage" "Derivation contains buildPerlPackage",
     -- Specific skips for classes of packages
     infixOf "teams.gnome.members" "Do not update GNOME during a release cycle",
     infixOf "https://downloads.haskell.org/ghc/" "GHC packages are versioned per file"
