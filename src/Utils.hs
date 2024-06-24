@@ -206,7 +206,7 @@ xdgRuntimeDir = do
 
 tmpRuntimeDir :: MonadIO m => ExceptT Text m FilePath
 tmpRuntimeDir = do
-  dir <- liftIO $ mkdtemp "nixpkgs-update"
+  dir <- liftIO $ mkdtemp "proxmox-nixos-update"
   dirExists <- liftIO $ doesDirectoryExist dir
   tryAssert
     ("Temporary directory " <> T.pack dir <> " does not exist.")
